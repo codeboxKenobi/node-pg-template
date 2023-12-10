@@ -4,7 +4,6 @@ const uuid = require('uuid');
 const mailService = require('./mail-service');
 const tokenService = require('./token-service');
 const ApiError = require('../exceptions/api-error');
-
 const db = require("../database/db.js");
 
 class AuthService {
@@ -17,15 +16,18 @@ class AuthService {
         const activationLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
         const user = await db.query("INSERT INTO users (email, password, activation_link) values ($1, $2, $3) RETURNING *",
             [email, hashPassword, activationLink]);
+
+        // const dashboard = await db.query("INSERT INTO dashboards (user_id, dashboard_id) values ($1, $2) RETURNING *",
+        //     [user.id, user.id]);
+
         await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
-        const tokens = tokenService.generateTokens(user);
+        const tokens = tokenService.generateTokens({user: user, dashboard: dashboard});
         await tokenService.saveToken(user.id, tokens.refreshToken);
 
         return {...tokens, user: user}
     }
 
     async activate(activationLink) {
-        // const user = await UserModel.findOne({activationLink})
         const user = await db.query("SELECT * FROM users where activation_link = $1", [activationLink]);
         if (!user) {
             throw ApiError.BadRequest('Неккоректная ссылка активации')
@@ -48,9 +50,8 @@ class AuthService {
     }
 
     async logout(refreshToken) {
-        console.log(refreshToken);
         const token = await tokenService.removeToken(refreshToken);
-        return token.rows;
+        return token;
     }
 
     async refresh(refreshToken) {

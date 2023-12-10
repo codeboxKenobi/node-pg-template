@@ -30,7 +30,6 @@ class TokenService {
     }
 
     async saveToken(userId, refreshToken) {
-        console.log("userId, refreshToken", userId, refreshToken);
         const tokenData = await db.query("SELECT * FROM tokens where user_id = $1", [userId]);
         if (tokenData) {
             tokenData.refreshToken = refreshToken;
