@@ -10,7 +10,7 @@ class AuthService {
     async registration(email, password) {
         const candidate = await db.query("SELECT * FROM users where email = $1", [email]);
         if (candidate.rows[0]) {
-            throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
+            throw ApiError.BadRequest(`Пользователь уже существует`)
         }
         const hashPassword = await bcrypt.hash(password, 3);
         const activationLink = uuid.v4(); // v34fa-asfasf-142saf-sa-asf
