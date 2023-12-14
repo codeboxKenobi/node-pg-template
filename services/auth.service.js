@@ -55,6 +55,7 @@ class AuthService {
     }
 
     async refresh(refreshToken) {
+        console.log(refreshToken);
         if (!refreshToken) {
             throw ApiError.UnauthorizedError();
         }
@@ -64,7 +65,7 @@ class AuthService {
             throw ApiError.UnauthorizedError();
         }
         const user = await db.query("SELECT * FROM users where id = $1", [userData.id]);
-        const tokens = tokenService.generateTokens(user);
+        const tokens = tokenService.generateTokens({user});
         await tokenService.saveToken(user.id, tokens.refreshToken);
         return {...tokens, user: user}
     }

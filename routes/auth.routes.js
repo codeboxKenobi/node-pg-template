@@ -12,7 +12,7 @@ router.post('/registration',
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 router.get('/activate/:link', authController.activate);
-router.get('/refresh', authController.refresh);
-router.get('/auth_user', authMiddleware, authController.getUser);
+router.post('/refresh', authController.refresh);
+router.get('/user', authMiddleware, authController.getUser);
 
 module.exports = router;

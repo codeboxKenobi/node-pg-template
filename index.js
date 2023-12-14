@@ -20,8 +20,8 @@ app.use(cors({
     origin: process.env.CLIENT_URL
 }));
 
-app.use("/api", userRouter);
-app.use("/api", postRouter);
+// app.use("/api", userRouter);
+// app.use("/api", postRouter);
 app.use("/api", authRouter);
 
 app.use(errorMiddleware);
